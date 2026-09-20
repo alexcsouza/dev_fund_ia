@@ -1,6 +1,9 @@
 from lib.search import *
 from lib.graphos import *
+from sympy.utilities.iterables import multiset_permutations
+
 import math
+import pandas as pd
 
 
 def init():
@@ -22,33 +25,37 @@ def mover_direita(p1):
     return pessoas[p1]['tempo']
 
 def create_representation(index, lado_esquerdo, lado_direito):
-    plt.figure(figsize=(10, 10))
-    # plt.imshow(grid, cmap='binary')
-    
-    cont = 1
-    for esq in lado_esquerdo:
-        plt.plot( 1, cont, 'b-', linewidth=3, label=esq)
-        cont = cont + 1
+    df = pd.DataFrame([lado_esquerdo, lado_direito])
+    print(df)
+    print('\n')
+    # print('Esq \t |\t Dir')
+    # for x in zip(*df):
+    #     print('\t | \t'.join(x))
+    # print('\n')
 
-    cont = 1
-    for dir in lado_direito:
-        plt.plot( 10, cont, 'b-', linewidth=3, label=dir)
-        cont = cont + 1
 
-    # if path:
-    #     path = np.array(path)
-    #     plt.plot(path[:, 1], path[:, 0], 'b-', linewidth=3, label='Path')
-    #     plt.plot(path[0, 1], path[0, 0], 'go', markersize=15, label='Start')
-    #     plt.plot(path[-1, 1], path[-1, 0], 'ro', markersize=15, label='Goal')
-    
-    plt.grid(True)
-    plt.legend(fontsize=12)
-    plt.title(f'Representação: {index}')
-    
-    # Pasta de imagens
-    img_base_path = Path('img/')
-    a_star_graph = f'{img_base_path}/rep-{index}.png'
-    plt.savefig(a_star_graph)
+    # for linha in range(0, (len(lado_direito) + len(lado_direito)):
+    # plt.figure(figsize=(10, 10))
+    # # plt.imshow(grid, cmap='binary')
+    # 
+    # cont = 1
+    # for esq in lado_esquerdo:
+    #     plt.plot( 1, cont, 'b-', linewidth=3, label=esq)
+    #     cont = cont + 1
+# 
+    # cont = 1
+    # for dir in lado_direito:
+    #     plt.plot( 10, cont, 'b-', linewidth=3, label=dir)
+    #     cont = cont + 1
+    # 
+    # plt.grid(True)
+    # plt.legend(fontsize=12)
+    # plt.title(f'Representação: {index}')
+    # 
+    # # Pasta de imagens
+    # img_base_path = Path('img/')
+    # a_star_graph = f'{img_base_path}/rep-{index}.png'
+    # plt.savefig(a_star_graph)
 
 
 pessoas = {
@@ -61,115 +68,69 @@ pessoas = {
 lado_direito  = []
 lado_esquerdo = []
 init()
-
-tempo = 0
-
-print(f"esq: {lado_esquerdo}")
-print(f"dir: {lado_direito}")
-print("\n")
-create_representation(0, lado_esquerdo, lado_direito)
-
-tempo = tempo + mover_esquerda('A', 'B')
-pessoas['A']['tocha'] = True
-print(f"esq: {lado_esquerdo}")
-print(f"dir: {lado_direito}")
-print("\n")
-create_representation(1, lado_esquerdo, lado_direito)
-
-
-tempo = tempo + mover_direita('A')
-pessoas['A']['tocha'] = True
-print(f"esq: {lado_esquerdo}")
-print(f"dir: {lado_direito}")
-print("\n")
-create_representation(2, lado_esquerdo, lado_direito)
-
-
-tempo = tempo + mover_esquerda('A', 'C')
-pessoas['A']['tocha'] = True
-print(f"esq: {lado_esquerdo}")
-print(f"dir: {lado_direito}")
-print("\n")
-create_representation(3, lado_esquerdo, lado_direito)
-
-
-tempo = tempo + mover_direita('A')
-pessoas['A']['tocha'] = True
-print(f"esq: {lado_esquerdo}")
-print(f"dir: {lado_direito}")
-print("\n")
-create_representation(4, lado_esquerdo, lado_direito)
-
-
-
-tempo = tempo + mover_esquerda('A', 'D')
-pessoas['A']['tocha'] = True
-print(f"esq: {lado_esquerdo}")
-print(f"dir: {lado_direito}")
-print("\n")
-create_representation(3, lado_esquerdo, lado_direito)
-
-
-print(f"esq: {lado_esquerdo}")
-print(f"dir: {lado_direito}")
-print(f"Tempo Total: {tempo} minutos")
-
-print("\n")
-
-
-
-
-lado_direito  = []
-lado_esquerdo = []
-init()
-
-tempo = 0
-
-
-print(f"esq: {lado_esquerdo}")
-print(f"dir: {lado_direito}")
-print("\n")
-create_representation(0, lado_esquerdo, lado_direito)
-
+lista_itens = ['A', 'B', 'C', 'D']
+permitacao_mais_rapida = []
+perm = []
+menor_tempo = 99999
 cont = 0
-while len(lado_direito) > 0:
-    p1 = lado_direito[0]
-    p2 = lado_direito[1]
-
-    if(pessoas[p1]['tempo'] > pessoas[p2]['tempo']):
-        pessoas[p2]['tocha'] = True 
-        pessoas[p1]['tocha'] = False 
-        mais_rapida = p2
-        tempo_mais_lento = pessoas[p1]['tempo']
-    else:    
-        pessoas[p2]['tocha'] = False 
-        pessoas[p1]['tocha'] = True 
-        mais_rapida = p1
-        tempo_mais_lento = pessoas[p2]['tempo']
+for lado_direito in multiset_permutations(lista_itens):
+    perm = lado_direito
+    lado_esquerdo  = []
     
-    cont = cont + 1
-    tempo = tempo + mover_esquerda(p1, p2)
-    print(f"esq <- {p1}, {p2} - {tempo}")
+    tempo = 0
+    print("\n")
+    print(f"---> Nova permitação: {lado_esquerdo}")
+
     print(f"esq: {lado_esquerdo}")
     print(f"dir: {lado_direito}")
-    print("\n")
-    create_representation(cont, lado_esquerdo, lado_direito)
+    create_representation(0, lado_esquerdo, lado_direito)
 
-    if(len(lado_direito) <= 0): 
-        break
     
-    cont = cont + 1
-    tempo = tempo + mover_direita(mais_rapida)
-    print(f"{mais_rapida} -> dir - {tempo}")
-    print(f"esq: {lado_esquerdo}")
-    print(f"dir: {lado_direito}")
-    print("\n")
-    create_representation(cont, lado_esquerdo, lado_direito)
+    while len(lado_direito) > 0:
+        p1 = lado_direito[0]
+        p2 = lado_direito[1]
 
+        if(pessoas[p1]['tempo'] > pessoas[p2]['tempo']):
+            pessoas[p2]['tocha'] = True 
+            pessoas[p1]['tocha'] = False 
+            mais_rapida = p2
+            tempo_mais_lento = pessoas[p1]['tempo']
+        else:    
+            pessoas[p2]['tocha'] = False 
+            pessoas[p1]['tocha'] = True 
+            mais_rapida = p1
+            tempo_mais_lento = pessoas[p2]['tempo']
 
-print(f"esq: {lado_esquerdo}")
-print(f"dir: {lado_direito}")
-print(f"Tempo Total: {tempo} minutos")
+        cont = cont + 1
+        tempo = tempo + mover_esquerda(p1, p2)
+        print(f"esq <- {p1}, {p2} - {tempo}")
+        #print(f"esq: {lado_esquerdo}")
+        #print(f"dir: {lado_direito}")
+        print("\n")
+        create_representation(cont, lado_esquerdo, lado_direito)
+
+        if(len(lado_direito) <= 0): 
+            break
+
+        cont = cont + 1
+        tempo = tempo + mover_direita(mais_rapida)
+        print(f"{mais_rapida} -> dir - {tempo}")
+        #print(f"esq: {lado_esquerdo}")
+        #print(f"dir: {lado_direito}")
+        print("\n")
+        create_representation(cont, lado_esquerdo, lado_direito)
+    
+#    print(f"esq: {lado_esquerdo}")
+#    print(f"dir: {lado_direito}")
+    print(f"Tempo Total: {tempo} minutos")
+    if(tempo < menor_tempo):
+        menor_tempo = tempo
+        permitacao_mais_rapida = perm
+
+print("\n")
+print(f"Permutação mais rápida: {permitacao_mais_rapida}")
+print(f"menor tempo: {menor_tempo}")
+print("\n")
 
 #  # Create a graph with 4 vertices and no edges
 #  V = 4

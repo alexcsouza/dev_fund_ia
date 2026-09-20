@@ -7,40 +7,39 @@ from typing import List, Tuple, Dict, Set
 from math import sqrt
 from collections import deque  # Import deque for efficient queue operations
 
+# Baseado nos seguintes artigos
 # https://www.datacamp.com/tutorial/breadth-first-search-in-python
 # https://www.datacamp.com/tutorial/depth-first-search-in-python
 # https://www.datacamp.com/tutorial/a-star-algorithm
 
-# Iterative DFS function
+# Depth-First Search - DFS
 def dfs(G, start):
-    visited = set()  # Track visited nodes
-    stack = [start]  # Stack for DFS
+    visited = set()  # Nós visitados
+    stack = [start]  # Pilha do DFS
     path = []
-    while stack:  # Continue until stack is empty
-        node = stack.pop()  # Pop a node from the stack
+    while stack:  
+        node = stack.pop() 
         if node not in visited:
-            visited.add(node)  # Mark node as visited
+            visited.add(node) 
             path.append(node)
-            stack.extend(reversed(G[node]))  # Add child nodes to stack
+            stack.extend(reversed(G[node])) 
     return path
 
 
-# Define the BFS function
+# Breadth-First Search - BFS
 def bfs(G, start):
-    visited = []  # List to keep track of visited nodes
-    queue = deque([start])  # Initialize the queue with the starting node
+    visited = []  # Nós visitados
+    queue = deque([start])  # Fila do BFS
     path = []
-    while queue:  # While there are still nodes to process
-        node = queue.popleft()  # Dequeue a node from the front of the queue
-
-        if node not in visited:  # Check if the node has been visited
-            visited.append(node)  # Mark the node as visited
+    while queue:  
+        node = queue.popleft() 
+        if node not in visited: 
+            visited.append(node) 
             path.append(node)
             
-            # Enqueue all unvisited neighbors (children) of the current node
             for neighbor in G[node]:
                 if neighbor not in visited:
-                    queue.append(neighbor)  # Add unvisited neighbors to the queue
+                    queue.append(neighbor) 
     return path
 
 
