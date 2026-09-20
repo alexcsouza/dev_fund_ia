@@ -25,7 +25,10 @@ def mover_direita(p1):
     return pessoas[p1]['tempo']
 
 def create_representation(index, lado_esquerdo, lado_direito):
-    df = pd.DataFrame([lado_esquerdo, lado_direito])
+    # df = pd.DataFrame(data={"Esq":lado_esquerdo, "Dir":lado_direito})
+    df = pd.DataFrame.from_dict({"Esq":lado_esquerdo, "Dir":lado_direito}, orient='index')
+    df = df.transpose()
+    print('\n')
     print(df)
     print('\n')
     # print('Esq \t |\t Dir')
@@ -81,8 +84,8 @@ for lado_direito in multiset_permutations(lista_itens):
     print("\n")
     print(f"---> Nova permitação: {lado_esquerdo}")
 
-    print(f"esq: {lado_esquerdo}")
-    print(f"dir: {lado_direito}")
+#    print(f"esq: {lado_esquerdo}")
+#    print(f"dir: {lado_direito}")
     create_representation(0, lado_esquerdo, lado_direito)
 
     
@@ -104,6 +107,7 @@ for lado_direito in multiset_permutations(lista_itens):
         cont = cont + 1
         tempo = tempo + mover_esquerda(p1, p2)
         print(f"esq <- {p1}, {p2} - {tempo}")
+        print(f"{mais_rapida} - tocha")
         #print(f"esq: {lado_esquerdo}")
         #print(f"dir: {lado_direito}")
         print("\n")
