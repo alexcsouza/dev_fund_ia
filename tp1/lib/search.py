@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import heapq
+import networkx as nx
 
 from pathlib import Path
 from typing import List, Tuple, Dict, Set
@@ -114,6 +115,41 @@ def reconstruct_path(goal_node: Dict) -> List[Tuple[int, int]]:
         current = current['parent']
         
     return path[::-1]  # Reverse to get path from start to goal
+
+def make_graphs(n=2, i=None, j=None):
+    """Make a graph recursively, by either including, or skipping each edge.
+
+    Edges are given in lexicographical order by construction."""
+    out = []
+    if i is None: # First call
+
+        out  = [[(0,1)]+r for r in make_graphs(n=n, i=0, j=1)]
+    elif j<n-1:
+        out += [[(i,j+1)]+r for r in make_graphs(n=n, i=i, j=j+1)]
+        out += [          r for r in make_graphs(n=n, i=i, j=j+1)]
+    elif i<n-1:
+        out = make_graphs(n=n, i=i+1, j=i+1)
+    else:
+        out = [[]]
+    return out
+
+def plot_graphs(graphs, figsize=14, dotsize=20):
+    """Utility to plot a lot of graphs from an array of graphs.
+
+    Each graphs is a list of edges; each edge is a tuple."""
+    n = len(graphs)
+    fig = plt.figure(figsize=(figsize,figsize))
+    fig.patch.set_facecolor('white') # To make copying possible (white background)
+
+    k = int(np.sqrt(n))
+    for i in range(n):
+        plt.subplot(k+1,k+1,i+1)
+        g = nx.Graph() # Generate a Networkx object
+
+        for e in graphs[i]:            
+            g.add_edge(e[0],e[1])
+        nx.draw_kamada_kawai(g, node_size=dotsize)
+        print('.', end='')
 
 def visualize_path(grid: np.ndarray, path: List[Tuple[int, int]]):
     """

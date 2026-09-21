@@ -1,7 +1,10 @@
 from lib.search import *
 from lib.graphos import *
 from sympy.utilities.iterables import multiset_permutations
+from pathlib import Path
 
+import networkx as nx
+import scipy
 import math
 import pandas as pd
 
@@ -9,7 +12,8 @@ import pandas as pd
 def init():
     global lado_direito
     global lado_esquerdo
-    lado_direito  = ['A', 'B', 'C', 'D']
+    global itens
+    lado_direito  = itens
     lado_esquerdo = []
 
 def mover_esquerda(p1, p2):
@@ -60,29 +64,37 @@ def create_representation(index, lado_esquerdo, lado_direito):
     # a_star_graph = f'{img_base_path}/rep-{index}.png'
     # plt.savefig(a_star_graph)
 
+img_base_path = Path('img/')
+    
+
+itens = ['A', 'B', 'C', 'D']
 
 pessoas = {
-    'A': {'tempo': 1,  'tocha': False},
-    'B': {'tempo': 2,  'tocha': False},
-    'C': {'tempo': 5,  'tocha': False},
-    'D': {'tempo': 10, 'tocha': False}
+    'A': {'id': 0,'tempo': 1,  'tocha': False},
+    'B': {'id': 1,'tempo': 2,  'tocha': False},
+    'C': {'id': 2,'tempo': 5,  'tocha': False},
+    'D': {'id': 3,'tempo': 10, 'tocha': False}
 }
 
 lado_direito  = []
 lado_esquerdo = []
 init()
-lista_itens = ['A', 'B', 'C', 'D']
+
 permitacao_mais_rapida = []
 perm = []
 menor_tempo = 99999
 cont = 0
-for lado_direito in multiset_permutations(lista_itens):
-    perm = lado_direito
+for lado_direito in multiset_permutations(itens):
+    g = nx.Graph() # Generate a Networkx object
+    perm = lado_direito.copy()
     lado_esquerdo  = []
     
     tempo = 0
     print("\n")
     print(f"---> Nova permitação: {lado_esquerdo}")
+
+    V = len(itens)
+    adj = [[] for _ in range(V)]
 
 #    print(f"esq: {lado_esquerdo}")
 #    print(f"dir: {lado_direito}")
@@ -111,7 +123,10 @@ for lado_direito in multiset_permutations(lista_itens):
         #print(f"esq: {lado_esquerdo}")
         #print(f"dir: {lado_direito}")
         print("\n")
+        add_edge(adj, pessoas[p1]['id'], pessoas[p2]['id'])
         create_representation(cont, lado_esquerdo, lado_direito)
+       
+        g.add_edge(pessoas[p1]['id'],pessoas[p1]['id'])
 
         if(len(lado_direito) <= 0): 
             break
@@ -127,6 +142,12 @@ for lado_direito in multiset_permutations(lista_itens):
 #    print(f"esq: {lado_esquerdo}")
 #    print(f"dir: {lado_direito}")
     print(f"Tempo Total: {tempo} minutos")
+    print(f"Matriz de Adjacências: {adj}")
+    #plot_graphs(adj)
+    nx.draw_kamada_kawai(g, node_size=5)
+    graph = f'{img_base_path}/graph-{cont}.png'
+    plt.savefig(graph)
+
     if(tempo < menor_tempo):
         menor_tempo = tempo
         permitacao_mais_rapida = perm
@@ -135,6 +156,9 @@ print("\n")
 print(f"Permutação mais rápida: {permitacao_mais_rapida}")
 print(f"menor tempo: {menor_tempo}")
 print("\n")
+
+
+
 
 #  # Create a graph with 4 vertices and no edges
 #  V = 4
