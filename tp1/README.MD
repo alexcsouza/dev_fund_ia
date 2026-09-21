@@ -82,10 +82,25 @@ O A* expande menos nós que o Custo Uniforme porque a heurística orienta a busc
 para os caminhos mais promissores, sem perder a garantia de otimalidade (a
 heurística é admissível).
 
+## Comparação de eficiência (variantes menos eficientes)
+
+Para ilustrar o impacto das otimizações, `comparacao_eficiencia.py` põe lado a
+lado as buscas eficientes e variantes propositalmente **menos eficientes** (em
+`lib/agentes_ingenuos.py`): BFS/DFS em árvore (sem conjunto de visitados) e A*
+com heurística nula. Todas ainda encontram uma solução válida; a diferença está
+no número de nós expandidos e no tempo. Exemplo de saída:
+
+| Estratégia | Nós (eficiente) | Nós (ingênua) | Fator |
+|-----------|-----------------|---------------|-------|
+| BFS | 25 | 1505 | 60× |
+| DFS | 12 | 51 | 4× |
+| A* | 18 | 25 | 1,4× |
+
 ## Como executar
 
 ```bash
-python3 main.py
+python3 main.py                   # resolve e compara os 4 métodos
+python3 comparacao_eficiencia.py  # eficiente x ingênuo (nós expandidos e tempo)
 ```
 
 Requer `pandas` (usado apenas para imprimir as tabelas).
@@ -94,10 +109,12 @@ Requer `pandas` (usado apenas para imprimir as tabelas).
 
 ```
 tp1/
-├── main.py            # resolve com os 4 agentes e imprime a comparação
+├── main.py                   # resolve com os 4 agentes e imprime a comparação
+├── comparacao_eficiencia.py  # comparação eficiente x variantes menos eficientes
 └── lib/
-    ├── problema.py    # modelagem: estado, objetivo, sucessora, heurística
-    ├── agentes.py     # DFS, BFS, custo uniforme e A*
-    ├── search.py      # implementações genéricas de referência (não usadas)
-    └── graphos.py     # utilitários de grafos de referência (não usados)
+    ├── problema.py           # modelagem: estado, objetivo, sucessora, heurística
+    ├── agentes.py            # DFS, BFS, custo uniforme e A* (versões eficientes)
+    ├── agentes_ingenuos.py   # variantes menos eficientes, só para comparação
+    ├── search.py             # implementações genéricas de referência (não usadas)
+    └── graphos.py            # utilitários de grafos de referência (não usados)
 ```
